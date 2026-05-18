@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculus in Agrotech: Oil Palm Growth Dynamics</title>
+    <!-- Tailwind CSS for clean, modern styling -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .math-font { font-family: 'Times New Roman', Times, serif; font-style: italic; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Header Section -->
+    <header class="bg-emerald-800 text-white py-6 px-4 shadow-md">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <span class="text-xs font-bold tracking-wider uppercase bg-emerald-600 px-2.5 py-1 rounded-full">SFA Agrotech Applications</span>
+                <h1 class="text-2xl md:text-3xl font-extrabold mt-2">Modeling Oil Palm Fresh Fruit Bunch (FFB) Yield Dynamics</h1>
+            </div>
+            <div class="text-right md:border-l md:border-emerald-600 md:pl-6">
+                <p class="text-sm text-emerald-200">Mathematical Bioscience Toolkit</p>
+                <p class="text-xs text-emerald-300 italic">Focus: Yield Optimization via Derivatives</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main class="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8 flex-grow w-full">
+        
+        <!-- Left Column: Problem Explanation & Formulas -->
+        <div class="lg:col-span-1 flex flex-col gap-6">
+            
+            <!-- Bioscience Context -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <h2 class="text-lg font-bold text-emerald-900 border-b border-slate-100 pb-2 mb-3">The Bioscience Scenario</h2>
+                <p class="text-sm leading-relaxed text-slate-600 mb-4">
+                    In Malaysian agrotech management, predicting the peak production rate of Oil Palm (<span class="italic">Elaeis guineensis</span>) is crucial for fertilizer schedules and labor allocation. 
+                </p>
+                <p class="text-sm leading-relaxed text-slate-600">
+                    A newly planted high-yield Tenera variation begins producing commercial Fresh Fruit Bunches (FFB) around Year 3. Yield increases rapidly, peaks, and then gradually stabilizes. Understanding the <strong>rate of change</strong> of this yield allows planters to know exactly when production is accelerating fastest and when it starts to level off.
+                </p>
+            </div>
+
+            <!-- Mathematical Framework -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <h2 class="text-lg font-bold text-emerald-900 border-b border-slate-100 pb-2 mb-3">Mathematical Modeling</h2>
+                <p class="text-xs text-slate-500 mb-4">
+                    Based on typical growth curves from MPOB reports, yield growth can be realistically modeled using a modified biological growth function where <span class="math-font">x</span> is tree age (years) and <span class="math-font">f(x)</span> is yield (tonnes/hectare/year).
+                </p>
+                
+                <!-- Function Formula -->
+                <div class="bg-slate-50 p-3 rounded-xl mb-4 border-l-4 border-emerald-600">
+                    <span class="text-xs font-semibold text-slate-500 block uppercase tracking-wider">Yield Function f(x)</span>
+                    <div class="text-base font-mono text-slate-800 mt-1">
+                        f(x) = -0.15x³ + 3.1x² - 14x + 18
+                    </div>
+                </div>
+
+                <!-- Derivative Formula -->
+                <div class="bg-slate-50 p-3 rounded-xl border-l-4 border-amber-500">
+                    <span class="text-xs font-semibold text-slate-500 block uppercase tracking-wider">Derivative f'(x) [Rate of Change]</span>
+                    <div class="text-base font-mono text-slate-800 mt-1">
+                        f'(x) = -0.45x² + 6.2x - 14
+                    </div>
+                    <p class="text-[11px] text-slate-500 mt-2">
+                        Calculated via Power Rule: <span class="math-font">d/dx [xⁿ] = n·xⁿ⁻¹</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Data Sources -->
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 text-xs text-slate-500">
+                <span class="font-semibold text-slate-700 block mb-1">Data reference benchmarks:</span>
+                <ul class="list-disc list-inside space-y-1">
+                    <li>Malaysian Palm Oil Board (MPOB) Yield Statistics Profile</li>
+                    <li>Felda Agricultural Services Sdn Bhd (FASSB) Crop Trajectories</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Right Column: Interactive Chart & Analysis -->
+        <div class="lg:col-span-2 flex flex-col gap-6">
+            
+            <!-- Interactive Chart Area -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900">Interactive FFB Yield Trajectory Curve</h2>
+                    <p class="text-xs text-slate-500 mt-1">Click anywhere along the chart line to analyze the precise derivative at that specific crop age.</p>
+                </div>
+                
+                <div class="relative my-6 h-72 md:h-96 w-full">
+                    <canvas id="yieldChart"></canvas>
+                </div>
+
+                <div class="text-center text-xs text-slate-400 italic">
+                    Timeline tracks peak production years (Age 3 to Age 12)
+                </div>
+            </div>
+
+            <!-- Dynamic Result Panel -->
+            <div id="resultPanel" class="bg-amber-50 border border-amber-200 rounded-2xl p-6 transition-all duration-300 shadow-sm">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="p-2 bg-amber-500 rounded-lg text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-amber-900 text-base">Real-time Calculus Analysis</h3>
+                        <p class="text-xs text-amber-700">Click a point on the graph above to run calculations</p>
+                    </div>
+                </div>
+
+                <!-- Initial State Placeholder -->
+                <div id="placeholderText" class="text-sm text-slate-600 italic py-2">
+                    Select any coordinate point on the line chart above to calculate the derivative <span class="math-font">f'(x)</span> and translate the mathematical value into an agrotechnological decision strategy.
+                </div>
+
+                <!-- Active Calculation Readout (Hidden initially) -->
+                <div id="analysisContent" class="hidden grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+                    <div class="bg-white p-3 rounded-xl border border-amber-200 shadow-2xs">
+                        <span class="text-xs font-semibold text-slate-500 block uppercase">Tree Age (x)</span>
+                        <span id="readoutAge" class="text-xl font-bold text-slate-800">--</span> <span class="text-xs text-slate-500">Years</span>
+                    </div>
+                    <div class="bg-white p-3 rounded-xl border border-amber-200 shadow-2xs">
+                        <span class="text-xs font-semibold text-slate-500 block uppercase">Current Yield f(x)</span>
+                        <span id="readoutYield" class="text-xl font-bold text-slate-800">--</span> <span class="text-xs text-slate-500">t/ha/yr</span>
+                    </div>
+                    <div class="bg-white p-3 rounded-xl border border-amber-200 shadow-2xs">
+                        <span class="text-xs font-semibold text-slate-500 block uppercase">Derivative f'(x)</span>
+                        <span id="readoutDerivative" class="text-xl font-bold text-emerald-700">--</span> <span class="text-xs text-emerald-600 font-medium">t/ha/yr²</span>
+                    </div>
+                    <div class="md:col-span-3 bg-white p-4 rounded-xl border border-amber-200 shadow-2xs mt-1">
+                        <span class="text-xs font-bold text-slate-700 uppercase tracking-wider block mb-1">Agrotech Layman Interpretation:</span>
+                        <p id="laymanExplanation" class="text-sm text-slate-600 leading-relaxed">--</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-4 px-4 text-center text-xs mt-auto border-t border-slate-800">
+        Interactive Bioscience Simulation • Designed for Agrotechnology Systems Analysis using Chart.js v4
+    </footer>
+
+    <!-- Logic Script for Calculations, Rendering, and Chart Animations -->
+    <script>
+        // Mathematical Functions Definitions
+        function calculateYield(x) {
+            // f(x) = -0.15x³ + 3.1x² - 14x + 18
+            return (-0.15 * Math.pow(x, 3)) + (3.1 * Math.pow(x, 2)) - (14 * x) + 18;
+        }
+
+        function calculateDerivative(x) {
+            // f'(x) = -0.45x² + 6.2x - 14
+            return (-0.45 * Math.pow(x, 2)) + (6.2 * x) - 14;
+        }
+
+        // Generate data arrays for ages 3 to 12 (intervals of 0.5 for smoother curve)
+        const dataAges = [];
+        const dataYields = [];
+        for (let age = 3; age <= 12; age += 0.5) {
+            dataAges.push(age);
+            dataYields.push(calculateYield(age).toFixed(2));
+        }
+
+        // Initialize Chart.js
+        const ctx = document.getElementById('yieldChart').getContext('2d');
+        const yieldChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: dataAges,
+                datasets: [{
+                    label: 'FFB Yield (Tonnes/Hectare/Year)',
+                    data: dataYields,
+                    borderColor: '#059669', // Emerald 600
+                    borderWidth: 3,
+                    backgroundColor: 'rgba(5, 150, 105, 0.05)',
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 4,
+                    pointHoverRadius: 8,
+                    pointBackgroundColor: '#059669',
+                    pointHoverBackgroundColor: '#f59e0b', // Amber 500
+                    pointHoverBorderColor: '#fff',
+                    pointHoverBorderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: { boxWidth: 12, font: { size: 11 } }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `Yield: ${context.raw} t/ha/yr`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Crop Age (Years since planting)',
+                            font: { weight: 'bold', size: 12 }
+                        },
+                        grid: { color: '#f1f5f9' }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Yield f(x) [t/ha/yr]',
+                            font: { weight: 'bold', size: 12 }
+                        },
+                        suggestedMin: 0,
+                        grid: { color: '#f1f5f9' }
+                    }
+                },
+                // Trigger action when user clicks on a line data point
+                onClick: (event, elements) => {
+                    if (elements.length > 0) {
+                        const index = elements[0].index;
+                        const selectedAge = dataAges[index];
+                        processAnalysis(selectedAge);
+                    }
+                },
+                // Animation settings on load
+                animation: {
+                    duration: 2000,
+                    easing: 'easeOutQuart'
+                }
+            }
+        });
+
+        // Business Logic for handling Calculations and dynamically building UI updates
+        function processAnalysis(age) {
+            const yieldVal = calculateYield(age);
+            const derivativeVal = calculateDerivative(age);
+
+            // Update visible numerical targets
+            document.getElementById('readoutAge').innerText = age.toFixed(1);
+            document.getElementById('readoutYield').innerText = yieldVal.toFixed(2);
+            
+            const derivTextElement = document.getElementById('readoutDerivative');
+            derivTextElement.innerText = (derivativeVal > 0 ? '+' : '') + derivativeVal.toFixed(2);
+            
+            // Adjust styling colors based on sign of derivative rate
+            if (derivativeVal >= 0) {
+                derivTextElement.className = "text-xl font-bold text-emerald-700";
+            } else {
+                derivTextElement.className = "text-xl font-bold text-red-600";
+            }
+
+            // Generate analytical qualitative insights text string
+            let insight = "";
+            if (age === 3) {
+                insight = "Production is just starting. The positive rate indicates the young palms are rapidly scaling up vegetative development to support fruit production. Capital investments are starting to yield returns.";
+            } else if (age > 3 && age < 6.5) {
+                insight = `Yield is expanding aggressively at an accelerating acceleration velocity of ${derivativeVal.toFixed(2)} tonnes per hectare every year. This represents the peak vegetative structural efficiency era. High nutritional management via fertilizer updates is mandatory to maintain this upward momentum.`;
+            } else if (age >= 6.5 && age <= 7.5) {
+                insight = `The rate of change is approaching zero (${derivativeVal.toFixed(2)} t/ha/yr²). This means your oil palms have reached their maximum biological efficiency ceiling. Yield performance stabilizes at this plateau height. Plan long-term mill logistics around this maximum throughput volume.`;
+            } else if (age > 7.5 && age <= 10) {
+                insight = `The derivative value turns negative (${derivativeVal.toFixed(2)} FFB units decrease). Production output metrics are contracting gradually. The trees are getting older, and harvesting taller structures brings mechanical difficulty, which registers mathematically as an initial degradation of growth pace.`;
+            } else {
+                insight = `Yield values are declining smoothly. At a negative trajectory pace of ${Math.abs(derivativeVal).toFixed(2)} t/ha/yr², operations should pivot strategies from aggressive structural expansion into defensive cost minimization while scheduling replanting timelines.`;
+            }
+
+            document.getElementById('laymanExplanation').innerHTML = insight;
+
+            // Interface visibility toggles to smooth view transitions
+            document.getElementById('placeholderText').classList.add('hidden');
+            document.getElementById('analysisContent').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
